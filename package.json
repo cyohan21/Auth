@@ -1,0 +1,23 @@
+{
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.2",
+    "jest-environment-jsdom": "^30.0.2",
+    "next": "^15.3.4",
+    "supertest": "^7.1.1",
+    "ts-jest": "^29.4.0"
+  },
+  "dependencies": {
+    "@testing-library/user-event": "^14.6.1",
+    "cookie-parser": "^1.4.7",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  }
+}
