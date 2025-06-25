@@ -38,5 +38,5 @@ describe ('POST /api/auth/verify-email', () => {
         .query({token: "blahblahblah"})
         expect(res.status).toBe(400)
         expect(res.body).toHaveProperty('error')
-    }, 15000)
+    })
 })

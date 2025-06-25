@@ -76,7 +76,7 @@ export const reVerifyEmail: RequestHandler = async (req, res, next) => {
     const user = await prisma.user.findUnique({where: {email}})
 
     if (!user) return void res.status(400).json({error: "No account found with the provided email."})
-    if (user.isEmailVerified) return void res.status(400).json({error: "Email has already been verified"})
+    if (user.isEmailVerified) return void res.status(400).json({error: "Email has already been verified."})
     
     const token = jwt.sign({email}, secret!, { expiresIn: "1d" })
     console.log(`Email confirmation link: http://localhost:${port}/api/auth/verify-email?token=${token}`)
