@@ -101,7 +101,7 @@ export const login: RequestHandler = async (req, res, next) => {
     if (!user.isEmailVerified) {
         return void res.status(400).json({error: "User is not yet verified. Please check your email."})
     }
-    const verifiedPassword = comparePassword(password, user.hashedPassword)
+    const verifiedPassword = await comparePassword(password, user.hashedPassword)
     if (!verifiedPassword) {
         return void res.status(400).json({error: "Password is incorrect."})
     }
