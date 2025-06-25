@@ -30,7 +30,7 @@ describe ('POST /api/auth/verify-email', () => {
         const res = await request(app)
         .post(`/api/auth/verify-email`)
         expect(res.status).toBe(400)
-        expect(res.body).toHaveProperty('error')
+        expect(res.body).toHaveProperty('error', "Token not in URL.")
     })
     it ('should return error: Invalid token payload', async () => {
         const res = await request(app)
