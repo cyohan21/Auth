@@ -1,7 +1,6 @@
 import request from 'supertest';
 import app from '../../app';
 
-
 describe('POST /api/auth/register', () => {
     it('should return error: An email and password are both required.', async () => {
         const res = await request(app)
