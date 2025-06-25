@@ -28,7 +28,7 @@ export const register: RequestHandler = async (req, res, next) => {
         console.log("User added.")
         const token = jwt.sign({email}, secret!, { expiresIn: "1d" })
         console.log(`Email confirmation link: http://localhost:${port}/api/auth/verify-email?token=${token}`)
-        return void res.status(200).json({message: "User added. Please check your email for the confirmation link."})
+        return void res.status(200).json({message: "User added. Please check your email for the confirmation link.", token})
              
     }
     catch (err) {
@@ -47,7 +47,7 @@ export const verifyEmail: RequestHandler = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, secret!) as {email: string}
-        if (!decoded.email) {
+        if (!decoded || !decoded.email) {
             return void res.status(400).json({error: "Invalid token payload."})
         }
         const userEmail = decoded.email
@@ -56,8 +56,15 @@ export const verifyEmail: RequestHandler = async (req, res, next) => {
         return void res.status(200).json({message: "Email Verified."})
 
     }
-    catch (err) {
-        console.error("Invalid or expired token.");
+    catch (err: any) {
+        if (err.name === 'TokenExpiredError') {
+        return void res.status(400).json({ error: 'Token has expired.' });
+        }
+        if (err.name === 'JsonWebTokenError') {
+        return void res.status(400).json({ error: 'Token is invalid.'});
+        }
+        console.error(err);
+        return void res.status(500).json({error: "Something went wrong with the server."})
     }
 }
 
