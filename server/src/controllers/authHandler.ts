@@ -117,7 +117,7 @@ export const login: RequestHandler = async (req, res, next) => {
         sameSite: "strict", 
         maxAge: 1000 * 60 * 60 * 24 * 7
     })
-    return void res.status(200).json({message: "Successfully logged in."})
+    return void res.status(200).json({message: "Successfully logged in.", accessToken, refreshToken})
     }
     catch (err) {
         console.error(err)
@@ -128,26 +128,54 @@ export const login: RequestHandler = async (req, res, next) => {
 export const logout: RequestHandler = async (req, res, next) => {
     const authHeader = req.headers.authorization as string
     const token = authHeader?.split(" ")[1]; // Split from Bearer, and take the token only
-    if (!token) {
-        return void res.status(400).json({error: "No token provided."})
+    const refreshToken = req.cookies.refreshToken;
+    if (!token && !refreshToken) {
+        return void res.status(400).json({error: "No tokens provided."})
     }
+    let accessHandled = false;
+    let refreshHandled = false;
+
+    if (token) {
     try {
-    const decoded = jwt.verify(token, secret!) as jwt.JwtPayload
-    if (!decoded || !decoded.jti) {
-        return void res.status(400).json({error: "Token is invalid or expired."})
+        const decodedToken = jwt.verify(token, secret!) as jwt.JwtPayload
+        const blacklistedToken = await prisma.tokenBlacklist.findUnique({where: {jti: decodedToken.jti}})
+        if (!blacklistedToken) {
+            await prisma.tokenBlacklist.create({data: {jti: decodedToken.jti as string}})
+            accessHandled = true
+        }
+        else {
+        console.warn("Access token already blacklisted.");
+        accessHandled = true
+        }
     }
-    const blacklistedToken = await prisma.tokenBlacklist.findUnique({where: {jti: decoded.jti}})
-    if (blacklistedToken) {
-        return void res.status(400).json({error: "Token already blacklisted."})
+    catch (err: any) {
+            console.warn("Access token issue:", err.name);
+        }
     }
-    await prisma.tokenBlacklist.create({data: {jti: decoded.jti as string}})
+
+    if (refreshToken) {
+        try {
+            const decodedRefresh = jwt.verify(refreshToken, secret!) as jwt.JwtPayload
+            const blacklistedRefresh = await prisma.tokenBlacklist.findUnique({where: {jti: decodedRefresh.jti}})
+            if (!blacklistedRefresh) {
+                await prisma.tokenBlacklist.create({data: {jti: decodedRefresh.jti as string}})
+                refreshHandled = true
+            }
+            else {
+            console.warn("Refresh token already blacklisted.");
+            refreshHandled = true
+            }
+        }
+        catch (err: any) {
+                console.warn("Refresh token issue:", err.name);
+            }
+    }
+
+    if (!accessHandled && !refreshHandled) {
+        return void res.status(400).json({error: "Invalid session. Please try to log in again."})
+    }
     return void res.status(200).json({message: "Successfully logged out."})
     }
-    catch (err) {
-        console.error(err)
-        return void res.status(500).json({error: "Something went wrong with the server."})
-    }
-}
 
 export const refresh: RequestHandler = async (req, res, next) => {
     const authHeader = req.headers.authorization as string

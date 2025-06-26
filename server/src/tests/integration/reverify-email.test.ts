@@ -2,8 +2,6 @@ import request from 'supertest'
 import prisma from "../../lib/prisma"
 import app from "../../app"
 
-let accessToken: string;
-
 beforeAll(async () => {
     await prisma.user.deleteMany()
     const res = await request(app)
