@@ -178,21 +178,14 @@ export const logout: RequestHandler = async (req, res, next) => {
     }
 
 export const refresh: RequestHandler = async (req, res, next) => {
-    const authHeader = req.headers.authorization as string
-    const token = authHeader?.split(" ")[1];
-    if (!token) return void res.status(400).json({error: "No token provided."})
+    const oldRefreshToken = req.cookies.refreshToken
+        if (!oldRefreshToken) return void res.status(400).json({error: "No token provided."})
 
-    try {
-        const oldRefreshToken = req.cookies.refreshToken
-        if (!oldRefreshToken) return void res.status(400).json({error: "You are not currently logged in, or your session has expired."})
-        
+    try {   
     const decoded = jwt.verify(oldRefreshToken, secret!) as jwt.JwtPayload
-    if (!decoded || !decoded.jti) {
-        return void res.status(400).json({error: "Token is invalid or expired."})
-    }
     const blacklistedToken = await prisma.tokenBlacklist.findUnique({where: {jti: decoded.jti}})
     if (blacklistedToken) {
-        return void res.status(400).json({error: "Token already blacklisted."})
+        console.warn("Refresh token already blacklisted.")
     }
     const accessToken = jwt.sign({id: decoded.id, email: decoded.email}, secret!, {expiresIn: "15m", jwtid: uuidv4()})
     console.log("Access Token:", accessToken)
@@ -208,8 +201,14 @@ export const refresh: RequestHandler = async (req, res, next) => {
 
     return void res.status(200).json({message: "Tokens refreshed."})
 }
-    catch (err) {
-        console.error(err)
+    catch (err: any) {
+        if (err.name === 'TokenExpiredError') {
+        return void res.status(400).json({ error: 'Token has expired.' });
+        }
+        if (err.name === 'JsonWebTokenError') {
+        return void res.status(400).json({ error: 'Token is invalid.'});
+        }
+        console.error(err);
         return void res.status(500).json({error: "Something went wrong with the server."})
     }
 
