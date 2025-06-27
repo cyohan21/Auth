@@ -3,12 +3,14 @@ import prisma from "../../lib/prisma"
 import app from "../../app"
 
 let accessToken: string;
+let email: string;
 
 beforeAll(async () => {
     await prisma.user.deleteMany()
+    email = `user+${Date.now()}@example.com`
     const res = await request(app)
     .post('/api/auth/register')
-    .send({email: 'caleb1@example.com', password: '1'})
+    .send({email: email, password: '1'})
     accessToken = res.body.token
 })
 
@@ -23,7 +25,7 @@ describe ('POST /api/auth/verify-email', () => {
         .query({token: accessToken})
         expect(res.status).toBe(200)
         expect(res.body).toHaveProperty('message')
-        const user = await prisma.user.findUnique({where: {email: 'caleb1@example.com'}})
+        const user = await prisma.user.findUnique({where: {email: email}})
         expect(user?.isEmailVerified).toEqual(true)
     })
     it ('should return error: Token not in URL.', async () => {

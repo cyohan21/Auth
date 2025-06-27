@@ -7,7 +7,7 @@ let password: string;
 
 beforeAll(async () => {
     await prisma.user.deleteMany();
-    email = "caleb3@example.com"
+    email = `user+${Date.now()}@example.com`
     password = "3"
     const res = await request(app)
     .post('/api/auth/register')
@@ -22,7 +22,7 @@ describe('POST /api/auth/login', () => {
     it("Should return error: User email is not yet verified", async () => {
         const res = await request(app)
         .post('/api/auth/login')
-        .send({email: 'caleb3@example.com', password: '3'})
+        .send({email: email, password: '3'})
         expect(res.status).toBe(400)
         expect(res.body).toHaveProperty('error', "User is not yet verified. Please check your email.")
     })
@@ -30,7 +30,7 @@ describe('POST /api/auth/login', () => {
         await prisma.user.update({where: {email: email}, data: {isEmailVerified: true}})
         const res = await request(app)
         .post('/api/auth/login')
-        .send({email: 'caleb3@example.com', password: ''})
+        .send({email: email, password: ''})
         expect(res.status).toBe(400)
         expect(res.body).toHaveProperty('error', "No password entered.")
     })
@@ -46,7 +46,7 @@ describe('POST /api/auth/login', () => {
         await prisma.user.update({where: {email: email}, data: {isEmailVerified: true}})
         const res = await request(app)
         .post('/api/auth/login')
-        .send({email: 'caleb3@example.com', password: 'aass'})
+        .send({email: email, password: 'aass'})
         expect(res.status).toBe(401)
         expect(res.body).toHaveProperty('error', "Password is incorrect.")
     })
@@ -54,7 +54,7 @@ describe('POST /api/auth/login', () => {
         await prisma.user.update({where: {email: email}, data: {isEmailVerified: true}})
         const res = await request(app)
         .post('/api/auth/login')
-        .send({email: 'caleb3@example.com', password: '3'})
+        .send({email: email, password: '3'})
         expect(res.status).toBe(200)
         expect(res.body).toHaveProperty('message', "Successfully logged in.")
     })

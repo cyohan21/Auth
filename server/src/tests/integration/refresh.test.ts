@@ -13,7 +13,7 @@ let refreshToken: string;
 
 beforeAll(async () => {
     await prisma.user.deleteMany();
-    email = "caleb3@example.com"
+    email = `user+${Date.now()}@example.com`
     password = "3"
 
     const res = await request(app)

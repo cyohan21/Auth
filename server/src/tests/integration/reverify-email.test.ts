@@ -2,11 +2,14 @@ import request from 'supertest'
 import prisma from "../../lib/prisma"
 import app from "../../app"
 
+let email: string;
+
 beforeAll(async () => {
     await prisma.user.deleteMany()
+    email = `user+${Date.now()}@example.com`;
     const res = await request(app)
     .post('/api/auth/register')
-    .send({email: 'caleb1@example.com', password: '1'})
+    .send({email: email, password: '1'})
 })
 
 afterAll(async () => {
@@ -24,22 +27,22 @@ describe ('POST /api/auth/resend-email-confirmation', () => {
     it ('should return error: No account found with the provided email.', async () => {
         const res = await request(app)
         .post(`/api/auth/resend-email-confirmation`)
-        .send({email: "caleb505@gmail.com"})
+        .send({email: "blahblah@gmail.com"})
         expect(res.status).toBe(400)
         expect(res.body).toHaveProperty('error', "No account found with the provided email.")
     })
     it ('should return success', async () => {
         const res = await request(app)
         .post(`/api/auth/resend-email-confirmation`)
-        .send({email: "caleb1@example.com"})
+        .send({email: email})
         expect(res.status).toBe(200)
         expect(res.body).toHaveProperty('message', "Email confirmation link resent. Please check your email for the confirmation link.")
     })
     it ('should return error: Email already verified', async () => {
-        await prisma.user.update({where: {email: "caleb1@example.com"}, data: {isEmailVerified: true}})
+        await prisma.user.update({where: {email: email}, data: {isEmailVerified: true}})
         const res = await request(app)
         .post(`/api/auth/resend-email-confirmation`)
-        .send({email: "caleb1@example.com"})
+        .send({email: email})
         expect(res.status).toBe(409)
         expect(res.body).toHaveProperty('error', "Email has already been verified.")
     })
