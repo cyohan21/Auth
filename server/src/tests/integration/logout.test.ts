@@ -3,6 +3,7 @@ import app from "../../app"
 import prisma from "../../lib/prisma"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
+import {v4 as uuidv4} from "uuid";
 dotenv.config()
 
 const secret = process.env.JWT_SECRET
@@ -14,7 +15,7 @@ let refreshToken: string;
 
 beforeAll(async () => {
     await prisma.user.deleteMany();
-    email = `user+${Date.now()}@example.com`
+    email = `user+${uuidv4()}@example.com`
     password = "3"
 
     const res = await request(app)

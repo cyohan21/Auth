@@ -4,6 +4,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
+    "test:serial": "jest --runInBand",
     "start": "node server",
     "build": "tsc",
     "dev": "nodemon src/index.ts"

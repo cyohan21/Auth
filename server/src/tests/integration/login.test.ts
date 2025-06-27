@@ -1,13 +1,14 @@
 import request from "supertest"
 import app from "../../app"
 import prisma from "../../lib/prisma"
+import {v4 as uuidv4} from "uuid";
 
 let email: string;
 let password: string;
 
 beforeAll(async () => {
     await prisma.user.deleteMany();
-    email = `user+${Date.now()}@example.com`
+    email = `user+${uuidv4()}@example.com`
     password = "3"
     const res = await request(app)
     .post('/api/auth/register')
