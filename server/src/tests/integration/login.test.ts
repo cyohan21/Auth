@@ -37,7 +37,7 @@ describe('POST /api/auth/login', () => {
     it("Should return error: User not found", async () => {
         const res = await request(app)
         .post('/api/auth/login')
-        .send({email: 'caleb10@example.com', password: 'aass'})
+        .send({email: `user+${uuidv4()}@example.com`, password: 'aass'})
         expect(res.status).toBe(400)
         expect(res.body).toHaveProperty('error', "User not found.")
     })

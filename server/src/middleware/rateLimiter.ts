@@ -1,20 +1,34 @@
-import rateLimit from "express-rate-limit";
+import {rateLimit, MemoryStore} from "express-rate-limit";
 
-export const globalLimiter = rateLimit({
+const globalTestStore = new MemoryStore();
+const loginTestStore = new MemoryStore();
+const registerTestStore = new MemoryStore();
+const refreshTestStore = new MemoryStore();
+
+export const globalLimiter = rateLimit({ // TODO: change max attempts higher later. 3 is temporary for multiple sensitive endpoints.
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // max 100 requests per IP
+  max: 5, // max 3 requests per IP 
   standardHeaders: true, // Uses new and modern headers
   legacyHeaders: false, // Disables old ones
-  message: "Too many requests. Please try again later."
+  store: globalTestStore,
+  handler: (req, res) => {
+    res.status(429).json({
+      error: "Too many attempts. Please try again later."
+    });
+  }
 });
-
 
 export const loginRateLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, 
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
-  message: "Too many login attempts. Try again in 5 minutes."
+  store: loginTestStore,
+  handler: (req, res) => {
+    res.status(429).json({
+      error: "Too many login attempts. Please try again later."
+    });
+  }
 });
 
 export const registerRateLimiter = rateLimit({
@@ -22,7 +36,12 @@ export const registerRateLimiter = rateLimit({
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
-  message: "Too many signup attempts. Try again in 10 minutes."
+  store: registerTestStore,
+  handler: (req, res) => {
+    res.status(429).json({
+      error: "Too many registration attempts. Please try again later."
+    });
+  }
 });
 
 export const refreshRateLimiter = rateLimit({
@@ -30,5 +49,19 @@ export const refreshRateLimiter = rateLimit({
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
-  message: "Too many refresh requests. Please slow down."
+  store: refreshTestStore,
+  handler: (req, res) => {
+    res.status(429).json({
+      error: "Too many refresh attempts. Please try again later."
+    });
+  }
 });
+
+
+export const resetRateLimiters = () => {
+  const testIp = "::ffff:127.0.0.1"
+  globalTestStore.resetKey(testIp);
+  loginTestStore.resetKey(testIp);
+  registerTestStore.resetKey(testIp);
+  refreshTestStore.resetKey(testIp);
+};

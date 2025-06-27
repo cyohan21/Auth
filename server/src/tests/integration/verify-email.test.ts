@@ -32,9 +32,6 @@ describe('POST /api/auth/verify-email', () => {
   })
 
   it('should return error: Token not in URL.', async () => {
-    const email = `user+${uuidv4()}@example.com`
-    await request(app).post('/api/auth/register').send({ email, password: '1' })
-
     const res = await request(app)
       .post(`/api/auth/verify-email`)
 
@@ -43,9 +40,6 @@ describe('POST /api/auth/verify-email', () => {
   })
 
   it('should return error: Invalid token payload', async () => {
-    const email = `user+${uuidv4()}@example.com`
-    await request(app).post('/api/auth/register').send({ email, password: '1' })
-
     const res = await request(app)
       .post(`/api/auth/verify-email`)
       .query({ token: "blahblahblah" })
