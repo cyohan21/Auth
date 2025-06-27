@@ -3,14 +3,9 @@ import app from '../../app';
 import prisma from "../../lib/prisma"
 import {v4 as uuidv4} from "uuid";
 
-let email: string;
-
-beforeAll(async () => {
-    await prisma.user.deleteMany();
-    email = `user+${uuidv4()}@example.com`
-    const res = await request(app)
-    .post('/api/auth/register')
-    .send({email: email, password: '3'})
+beforeEach(async () => {
+    await prisma.user.deleteMany()
+    await prisma.tokenBlacklist.deleteMany()
 })
 
 afterAll(async () => {
@@ -33,6 +28,8 @@ describe('POST /api/auth/register', () => {
         expect(res.body).toHaveProperty('error')
 }); 
     it('should return error: User already registered', async () => {
+        const email = `user+${uuidv4()}@example.com`
+        await request(app).post('/api/auth/register').send({email: email, password: '3'})
         const res = await request(app)
         .post('/api/auth/register')
         .send({email: email, password: '3'})
@@ -40,9 +37,10 @@ describe('POST /api/auth/register', () => {
         expect(res.body).toHaveProperty('error')
 }); 
     it('should return 200 status: User added', async () => {
+        const email = `user+${uuidv4()}@example.com`
         const res = await request(app)
         .post('/api/auth/register')
-        .send({email: `user+${Date.now()}@example.com`, password: '5'})
+        .send({email: email, password: '5'})
         expect(res.status).toBe(200)
         expect(res.body).toHaveProperty('message')
 }); 

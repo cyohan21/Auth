@@ -3,14 +3,9 @@ import prisma from "../../lib/prisma"
 import app from "../../app"
 import {v4 as uuidv4} from "uuid";
 
-let email: string;
-
-beforeAll(async () => {
+beforeEach(async () => {
     await prisma.user.deleteMany()
-    email = `user+${uuidv4()}@example.com`;
-    const res = await request(app)
-    .post('/api/auth/register')
-    .send({email: email, password: '1'})
+    await prisma.tokenBlacklist.deleteMany()
 })
 
 afterAll(async () => {
@@ -19,6 +14,8 @@ afterAll(async () => {
 
 describe ('POST /api/auth/resend-email-confirmation', () => {
     it ('should return error: No email provided.', async () => {
+        const email = `user+${uuidv4()}@example.com`;
+        await request(app).post('/api/auth/register').send({email: email, password: '1'})
         const res = await request(app)
         .post(`/api/auth/resend-email-confirmation`)
         .send({email: ""})
@@ -26,6 +23,8 @@ describe ('POST /api/auth/resend-email-confirmation', () => {
         expect(res.body).toHaveProperty('error', "No email provided.")
     })
     it ('should return error: No account found with the provided email.', async () => {
+        const email = `user+${uuidv4()}@example.com`;
+        await request(app).post('/api/auth/register').send({email: email, password: '1'})
         const res = await request(app)
         .post(`/api/auth/resend-email-confirmation`)
         .send({email: "blahblah@gmail.com"})
@@ -33,6 +32,8 @@ describe ('POST /api/auth/resend-email-confirmation', () => {
         expect(res.body).toHaveProperty('error', "No account found with the provided email.")
     })
     it ('should return success', async () => {
+        const email = `user+${uuidv4()}@example.com`;
+        await request(app).post('/api/auth/register').send({email: email, password: '1'})
         const res = await request(app)
         .post(`/api/auth/resend-email-confirmation`)
         .send({email: email})
@@ -40,6 +41,8 @@ describe ('POST /api/auth/resend-email-confirmation', () => {
         expect(res.body).toHaveProperty('message', "Email confirmation link resent. Please check your email for the confirmation link.")
     })
     it ('should return error: Email already verified', async () => {
+        const email = `user+${uuidv4()}@example.com`;
+        await request(app).post('/api/auth/register').send({email: email, password: '1'})
         await prisma.user.update({where: {email: email}, data: {isEmailVerified: true}})
         const res = await request(app)
         .post(`/api/auth/resend-email-confirmation`)
