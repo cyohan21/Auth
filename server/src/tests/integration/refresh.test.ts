@@ -9,7 +9,6 @@ const secret = process.env.JWT_SECRET
 
 let email: string;
 let password: string;
-let accessToken: string;
 let refreshToken: string;
 
 beforeAll(async () => {

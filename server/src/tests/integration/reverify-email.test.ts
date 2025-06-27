@@ -40,7 +40,7 @@ describe ('POST /api/auth/resend-email-confirmation', () => {
         const res = await request(app)
         .post(`/api/auth/resend-email-confirmation`)
         .send({email: "caleb1@example.com"})
-        expect(res.status).toBe(400)
+        expect(res.status).toBe(409)
         expect(res.body).toHaveProperty('error', "Email has already been verified.")
     })
 

@@ -47,7 +47,7 @@ describe('POST /api/auth/login', () => {
         const res = await request(app)
         .post('/api/auth/login')
         .send({email: 'caleb3@example.com', password: 'aass'})
-        expect(res.status).toBe(400)
+        expect(res.status).toBe(401)
         expect(res.body).toHaveProperty('error', "Password is incorrect.")
     })
     it("Should return sucess: User logged in.", async () => {
