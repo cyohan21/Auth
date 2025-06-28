@@ -14,17 +14,13 @@ afterAll(async () => {
 
 describe ('POST /api/auth/resend-email-confirmation', () => {
     it ('should return error: No email provided.', async () => {
-        const email = `user+${uuidv4()}@example.com`;
-        await request(app).post('/api/auth/register').send({email: email, password: '1'})
-        const res = await request(app)
-        .post(`/api/auth/resend-email-confirmation`)
-        .send({email: ""})
+        const res = await request(app).post(`/api/auth/resend-email-confirmation`).send({email: ""})
         expect(res.status).toBe(400)
         expect(res.body).toHaveProperty('error', "No email provided.")
     })
     it ('should return error: No account found with the provided email.', async () => {
         const email = `user+${uuidv4()}@example.com`;
-        await request(app).post('/api/auth/register').send({email: email, password: '1'})
+        await request(app).post('/api/auth/register').send({email: email, password: "Dream@505"})
         const res = await request(app)
         .post(`/api/auth/resend-email-confirmation`)
         .send({email: "blahblah@gmail.com"})
@@ -33,7 +29,7 @@ describe ('POST /api/auth/resend-email-confirmation', () => {
     })
     it ('should return success', async () => {
         const email = `user+${uuidv4()}@example.com`;
-        await request(app).post('/api/auth/register').send({email: email, password: '1'})
+        await request(app).post('/api/auth/register').send({email: email, password: "Dream@505"})
         const res = await request(app)
         .post(`/api/auth/resend-email-confirmation`)
         .send({email: email})
@@ -42,7 +38,7 @@ describe ('POST /api/auth/resend-email-confirmation', () => {
     })
     it ('should return error: Email already verified', async () => {
         const email = `user+${uuidv4()}@example.com`;
-        await request(app).post('/api/auth/register').send({email: email, password: '1'})
+        await request(app).post('/api/auth/register').send({email: email, password: "Dream@505"})
         await prisma.user.update({where: {email: email}, data: {isEmailVerified: true}})
         const res = await request(app)
         .post(`/api/auth/resend-email-confirmation`)
@@ -50,5 +46,4 @@ describe ('POST /api/auth/resend-email-confirmation', () => {
         expect(res.status).toBe(409)
         expect(res.body).toHaveProperty('error', "Email has already been verified.")
     })
-
 })

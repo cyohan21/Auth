@@ -19,7 +19,7 @@ afterEach(async () => {
 describe('POST /api/auth/login', () => {
     it("Should return 429: Too many login attempts.", async () => {
         const email = `user+${uuidv4()}@example.com`
-        const password = '1'
+        const password = "Dream@505"
 
         let lastResponse: any;
 
@@ -32,7 +32,7 @@ describe('POST /api/auth/login', () => {
     })
     it("Should return 429: Too many registration attempts.", async () => {
         const email = `user+${uuidv4()}@example.com`
-        const password = '1'
+        const password = "Dream@505"
 
         let lastResponse: any;
 

@@ -23,16 +23,19 @@ describe('POST /api/auth/register', () => {
     it('should return error: An email and password are both required.', async () => {
         const res = await request(app)
         .post('/api/auth/register')
-        .send({email: '', password: '12345'})
+        .send({email: '', password: "Dream@505"})
         expect(res.status).toBe(400)
-        expect(res.body).toHaveProperty('error')
+        expect(res.body).toHaveProperty('error', 'Validation failed.')
+        // Zod
+        expect(res.body.details.email).toContain("Invalid email address.");
+
 }); 
     it('should return error: User already registered', async () => {
         const email = `user+${uuidv4()}@example.com`
-        await request(app).post('/api/auth/register').send({email: email, password: '3'})
+        await request(app).post('/api/auth/register').send({email: email, password: "Dream@505"})
         const res = await request(app)
         .post('/api/auth/register')
-        .send({email: email, password: '3'})
+        .send({email: email, password: "Dream@505"})
         expect(res.status).toBe(409)
         expect(res.body).toHaveProperty('error')
 }); 
@@ -40,9 +43,9 @@ describe('POST /api/auth/register', () => {
         const email = `user+${uuidv4()}@example.com`
         const res = await request(app)
         .post('/api/auth/register')
-        .send({email: email, password: '5'})
+        .send({email: email, password: "Dream@505"})
         expect(res.status).toBe(200)
-        expect(res.body).toHaveProperty('message')
+        expect(res.body).toHaveProperty('message', 'User added. Please check your email for the confirmation link.')
 }); 
 })
 

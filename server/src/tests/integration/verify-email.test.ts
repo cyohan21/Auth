@@ -17,7 +17,7 @@ describe('POST /api/auth/verify-email', () => {
     const email = `user+${uuidv4()}@example.com`
     const regRes = await request(app)
       .post('/api/auth/register')
-      .send({ email, password: '1' })
+      .send({ email, password: 'Dream@505' })
     const accessToken = regRes.body.token
 
     const res = await request(app)

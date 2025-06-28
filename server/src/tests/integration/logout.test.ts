@@ -35,7 +35,7 @@ describe('POST /api/auth/logout', () => {
 
   it("Should return success, with blacklisted access token, and no refresh.", async () => {
     const email = `user+${uuidv4()}@example.com`
-    const password = "3"
+    const password = "Dream@505"
 
     await request(app).post('/api/auth/register').send({ email, password })
     await prisma.user.update({ where: { email }, data: { isEmailVerified: true } })
@@ -57,7 +57,7 @@ describe('POST /api/auth/logout', () => {
 
   it("Should return success, with no refresh token.", async () => {
     const email = `user+${uuidv4()}@example.com`
-    const password = "3"
+    const password = "Dream@505"
 
     await request(app).post('/api/auth/register').send({ email, password })
     await prisma.user.update({ where: { email }, data: { isEmailVerified: true } })
@@ -76,7 +76,7 @@ describe('POST /api/auth/logout', () => {
 
   it("Should return success.", async () => {
     const email = `user+${uuidv4()}@example.com`
-    const password = "3"
+    const password = "Dream@505"
 
     await request(app).post('/api/auth/register').send({ email, password })
     await prisma.user.update({ where: { email }, data: { isEmailVerified: true } })

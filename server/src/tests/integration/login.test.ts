@@ -15,7 +15,7 @@ afterAll(async () => {
 describe('POST /api/auth/login', () => {
     it("Should return error: User email is not yet verified", async () => {
         const email = `user+${uuidv4()}@example.com`
-        const password = '1'
+        const password = "Dream@505"
         await request(app).post('/api/auth/register').send({email: email, password: password})
         const res = await request(app)
         .post('/api/auth/login')
@@ -25,14 +25,16 @@ describe('POST /api/auth/login', () => {
     })
     it("Should return error: No password entered", async () => {
         const email = `user+${uuidv4()}@example.com`
-        const password = '1'
+        const password = "Dream@505"
         await request(app).post('/api/auth/register').send({email: email, password: password})
         await prisma.user.update({where: {email: email}, data: {isEmailVerified: true}})
         const res = await request(app)
         .post('/api/auth/login')
         .send({email: email, password: ''})
         expect(res.status).toBe(400)
-        expect(res.body).toHaveProperty('error', "No password entered.")
+        expect(res.body).toHaveProperty('error', "Validation failed.")
+        // Zod
+        expect(res.body.details.password).toContain("Please enter a password.");
     })
     it("Should return error: User not found", async () => {
         const res = await request(app)
@@ -43,7 +45,7 @@ describe('POST /api/auth/login', () => {
     })
     it("Should return error: password is incorrect.", async () => {
         const email = `user+${uuidv4()}@example.com`
-        const password = '1'
+        const password = "Dream@505"
         await request(app).post('/api/auth/register').send({email: email, password: password})
         await prisma.user.update({where: {email: email}, data: {isEmailVerified: true}})
         const res = await request(app)
@@ -54,7 +56,7 @@ describe('POST /api/auth/login', () => {
     })
     it("Should return sucess: User logged in.", async () => {
         const email = `user+${uuidv4()}@example.com`
-        const password = '1'
+        const password = "Dream@505"
         await request(app).post('/api/auth/register').send({email: email, password: password})
         await prisma.user.update({where: {email: email}, data: {isEmailVerified: true}})
         const res = await request(app)

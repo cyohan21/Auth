@@ -38,7 +38,7 @@ describe('POST /api/auth/refresh', () => {
 
   it("Should return success.", async () => {
     const email = `user+${uuidv4()}@example.com`
-    const password = "3"
+    const password = "Dream@505"
 
     await request(app).post('/api/auth/register').send({ email, password })
     await prisma.user.update({ where: { email }, data: { isEmailVerified: true } })
@@ -59,7 +59,7 @@ describe('POST /api/auth/refresh', () => {
 
   it("Should return ok: Token already blacklisted.", async () => {
     const email = `user+${uuidv4()}@example.com`
-    const password = "3"
+    const password = "Dream@505"
 
     await request(app).post('/api/auth/register').send({ email, password })
     await prisma.user.update({ where: { email }, data: { isEmailVerified: true } })
