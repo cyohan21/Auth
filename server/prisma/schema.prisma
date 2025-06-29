@@ -30,7 +30,7 @@ model tokenBlacklist {
 model passwordHistory {
   id  Int @id @default(autoincrement())
   userEmail String  @unique
-  oldPasswordHashes  String
+  oldPasswordHash  String
   createdAt DateTime  @default(now())
   user            User   @relation(fields: [userEmail], references: [email])
 }

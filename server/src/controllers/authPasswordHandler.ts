@@ -74,19 +74,31 @@ export const resetPassword: RequestHandler = async (req, res, next) => {
             return next(error);
         }
 
-        const hashedPassword = await hashPassword(newPassword)
+        const newHashedPassword = await hashPassword(newPassword)
         const oldHashes = await prisma.passwordHistory.findMany({
             where: {userEmail}, 
-            select: {oldPasswordHashes: true}})
+            select: {oldPasswordHash: true}})
         
-        for (const {oldPasswordHashes} of oldHashes) {
-            if (await comparePassword(newPassword, oldPasswordHashes)) {
+        for (const {oldPasswordHash} of oldHashes) {
+            if (await comparePassword(newPassword, oldPasswordHash)) {
                 const error = new Error("Cannot reuse previous passwords.");
                 (error as any).status = 409;
                 return next(error);
             }
         }
-        await prisma.user.update({where: {email: userEmail}, data: {hashedPassword}})
+        const user = await prisma.user.findUnique({where: {email: userEmail}, select: {hashedPassword: true}})
+        if (!user || !user.hashedPassword) {
+            const error = new Error("User not found or missing password hash.");
+            (error as any).status = 500;
+            return next(error);
+        }
+        if (await comparePassword(newPassword, user.hashedPassword)) {
+            const error = new Error("New password cannot be the same as your current password.");
+            (error as any).status = 409;
+            return next(error);
+        }
+        await prisma.passwordHistory.create({data: {userEmail, oldPasswordHash: user.hashedPassword}})
+        await prisma.user.update({where: {email: userEmail}, data: {hashedPassword: newHashedPassword}})
         return void res.status(200).json({message: "Password successfully reset."})
         }
         catch (err: any) {
