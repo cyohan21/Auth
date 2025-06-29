@@ -17,6 +17,7 @@ model User {
   id  Int @id @default(autoincrement())
   email String  @unique
   hashedPassword  String
+  passwordHistories passwordHistory[]
   createdAt DateTime  @default(now())
   lastLogin DateTime?
   isEmailVerified Boolean @default(false)
@@ -24,4 +25,12 @@ model User {
 
 model tokenBlacklist {
   jti String @id
+}
+
+model passwordHistory {
+  id  Int @id @default(autoincrement())
+  userEmail String  @unique
+  oldPasswordHashes  String
+  createdAt DateTime  @default(now())
+  user            User   @relation(fields: [userEmail], references: [email])
 }

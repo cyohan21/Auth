@@ -55,7 +55,7 @@ export const verifyEmail: RequestHandler = async (req, res, next) => {
     try {
         const decoded = jwt.verify(token, secret!) as {email: string}
         if (!decoded || !decoded.email) {
-            const error = new Error("Invalid token payload.");
+        const error = new Error("Invalid token payload.");
         (error as any).status = 400
         return next(error)
         }
