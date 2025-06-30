@@ -57,7 +57,6 @@ export const register: RequestHandler = async (req, res, next) => {
                 html: html
             })
 
-            console.log("Message Sent: " + info.messageId)
             console.log(`Email confirmation link: http://localhost:${port}/api/auth/verify-email?token=${token}`)
         }
             catch (err) {
@@ -165,7 +164,6 @@ export const reVerifyEmail: RequestHandler = async (req, res, next) => {
                 html: html
             })
 
-            console.log("Message Sent: " + info.messageId)
             console.log(`Email confirmation link: http://localhost:${port}/api/auth/verify-email?token=${token}`)
         }
             catch (err) {
