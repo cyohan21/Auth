@@ -1,6 +1,7 @@
 import {RequestHandler} from "express";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from "uuid";
 dotenv.config()
 // Lib
@@ -31,7 +32,41 @@ export const register: RequestHandler = async (req, res, next) => {
         await prisma.user.create({data: {email, hashedPassword}})
         console.log("User added.")
         const token = jwt.sign({email}, secret!, { expiresIn: "1d" })
-        console.log(`Email confirmation link: http://localhost:${port}/api/auth/verify-email?token=${token}`)
+        try {
+            const html =`<h1>Confirm your email</h1>
+                        <body>
+                        <p> Email confirmation link: 
+                        <a href="http://localhost:${port}/api/auth/verify-email?token=${token}">Click Here</a>
+                        </p>
+                        </body>`
+
+            const transporter = nodemailer.createTransport({ // Change these values into your own.
+                host: process.env.EMAIL_HOST,
+                port: 465,
+                secure: true,
+                auth: {
+                    user: process.env.AUTH_USER,
+                    pass: process.env.AUTH_PASS
+                }
+            })
+
+            const info = await transporter.sendMail({
+                from: process.env.AUTH_USER,
+                to: email,
+                subject: "Confirm your email: Auth-Proj",
+                html: html
+            })
+
+            console.log("Message Sent: " + info.messageId)
+            console.log(`Email confirmation link: http://localhost:${port}/api/auth/verify-email?token=${token}`)
+        }
+            catch (err) {
+                const error = new Error("Something went wrong with email delivery.");
+                (error as any).status = 500;
+                return next(error);
+        }
+
+
         return void res.status(200).json({message: "User added. Please check your email for the confirmation link.", token})
              
     }
@@ -105,7 +140,39 @@ export const reVerifyEmail: RequestHandler = async (req, res, next) => {
     }
     
     const token = jwt.sign({email}, secret!, { expiresIn: "1d" })
-    console.log(`Email confirmation link: http://localhost:${port}/api/auth/verify-email?token=${token}`)
+    try {
+            const html =`<h1>Confirm your email</h1>
+                        <body>
+                        <p> Email confirmation link: 
+                        <a href="http://localhost:${port}/api/auth/verify-email?token=${token}">Click Here</a>
+                        </p>
+                        </body>`
+
+            const transporter = nodemailer.createTransport({ // Change these values into your own.
+                host: process.env.EMAIL_HOST,
+                port: 465,
+                secure: true,
+                auth: {
+                    user: process.env.AUTH_USER,
+                    pass: process.env.AUTH_PASS
+                }
+            })
+
+            const info = await transporter.sendMail({
+                from: process.env.AUTH_USER,
+                to: email,
+                subject: "Confirm your email: Auth-Proj",
+                html: html
+            })
+
+            console.log("Message Sent: " + info.messageId)
+            console.log(`Email confirmation link: http://localhost:${port}/api/auth/verify-email?token=${token}`)
+        }
+            catch (err) {
+                const error = new Error("Something went wrong with email delivery.");
+                (error as any).status = 500;
+                return next(error);
+        }
     return void res.status(200).json({message: "Email confirmation link resent. Please check your email for the confirmation link."})
 }
     catch (err) {

@@ -2,6 +2,8 @@ import request from 'supertest';
 import app from '../../app';
 import prisma from "../../lib/prisma"
 import {v4 as uuidv4} from "uuid";
+import dotenv from "dotenv"
+dotenv.config()
 
 beforeEach(async () => {
     await prisma.user.deleteMany()
@@ -39,14 +41,14 @@ describe('POST /api/auth/register', () => {
         expect(res.status).toBe(409)
         expect(res.body).toHaveProperty('error')
 }); 
-    it('should return 200 status: User added', async () => {
-        const email = `user+${uuidv4()}@example.com`
+it('should return 200 status: User added', async () => {
+        const email = process.env.TEST_RECIPIENT
         const res = await request(app)
         .post('/api/auth/register')
         .send({email: email, password: "Dream@505"})
         expect(res.status).toBe(200)
         expect(res.body).toHaveProperty('message', 'User added. Please check your email for the confirmation link.')
-}); 
+});  
 })
 
 

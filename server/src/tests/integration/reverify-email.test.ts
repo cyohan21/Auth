@@ -2,6 +2,8 @@ import request from 'supertest'
 import prisma from "../../lib/prisma"
 import app from "../../app"
 import {v4 as uuidv4} from "uuid";
+import dotenv from "dotenv"
+dotenv.config()
 
 beforeEach(async () => {
     await prisma.user.deleteMany()
@@ -28,7 +30,7 @@ describe ('POST /api/auth/resend-email-confirmation', () => {
         expect(res.body).toHaveProperty('error', "No account found with the provided email.")
     })
     it ('should return success', async () => {
-        const email = `user+${uuidv4()}@example.com`;
+        const email = process.env.TEST_RECIPIENT;
         await request(app).post('/api/auth/register').send({email: email, password: "Dream@505"})
         const res = await request(app)
         .post(`/api/auth/resend-email-confirmation`)
