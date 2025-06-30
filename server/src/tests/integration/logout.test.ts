@@ -19,14 +19,14 @@ afterAll(async () => {
 
 describe('POST /api/auth/logout', () => {
   it("Should return error: No token provided.", async () => {
-    const res = await request(app).post('/api/auth/logout')
+    const res = await request(app).get('/api/auth/logout')
     expect(res.status).toBe(400)
     expect(res.body).toHaveProperty('error', "No tokens provided.")
   })
 
   it("Should return error: Invalid session.", async () => {
     const res = await request(app)
-      .post('/api/auth/logout')
+      .get('/api/auth/logout')
       .set('Authorization', `Bearer blahblah`)
       .set("Cookie", ["refreshToken=blahblahblah"])
     expect(res.status).toBe(400)
@@ -47,7 +47,7 @@ describe('POST /api/auth/logout', () => {
     await prisma.tokenBlacklist.create({ data: { jti: decoded.jti! } })
 
     const res = await request(app)
-      .post('/api/auth/logout')
+      .get('/api/auth/logout')
       .set('Authorization', `Bearer ${accessToken}`)
       .set("Cookie", [`refreshToken=`])
 
@@ -66,7 +66,7 @@ describe('POST /api/auth/logout', () => {
     const accessToken = loginRes.body.accessToken
 
     const res = await request(app)
-      .post('/api/auth/logout')
+      .get('/api/auth/logout')
       .set('Authorization', `Bearer ${accessToken}`)
       .set("Cookie", [`refreshToken=`])
 
@@ -90,7 +90,7 @@ describe('POST /api/auth/logout', () => {
     const refreshToken = refreshCookie?.split(';')[0].split('=')[1] ?? ''
 
     const res = await request(app)
-      .post('/api/auth/logout')
+      .get('/api/auth/logout')
       .set('Authorization', `Bearer ${accessToken}`)
       .set("Cookie", [`refreshToken=${refreshToken}`])
 

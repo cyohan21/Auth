@@ -7,10 +7,10 @@ import {registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema} 
 const router = Router();
 
 router.post("/register", validate(registerSchema), registerRateLimiter, register);
-router.post("/verify-email", globalLimiter, verifyEmail);
+router.get("/verify-email", globalLimiter, verifyEmail);
 router.post("/resend-email-confirmation", globalLimiter, reVerifyEmail)
 router.post("/login", validate(loginSchema), loginRateLimiter, login)
-router.post("/logout", logout)
+router.get("/logout", logout)
 router.post("/refresh", refreshRateLimiter, refresh)
 router.post("/forgot-password", validate(forgotPasswordSchema), globalLimiter, forgotPassword)
 router.post("/reset-password", validate(resetPasswordSchema), globalLimiter, resetPassword)

@@ -67,7 +67,7 @@ describe('POST /api/auth/login', () => {
         let res: any;
         
         for (let i = 0; i < 6; i++) {
-        res = await request(app).post(`/api/auth/verify-email`).query({ token: "blahblahblah" })
+        res = await request(app).get(`/api/auth/verify-email`).query({ token: "blahblahblah" })
         }
 
         expect(res.status).toBe(429)

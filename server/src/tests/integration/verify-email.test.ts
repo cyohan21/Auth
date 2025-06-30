@@ -21,7 +21,7 @@ describe('POST /api/auth/verify-email', () => {
     const accessToken = regRes.body.token
 
     const res = await request(app)
-      .post(`/api/auth/verify-email`)
+      .get(`/api/auth/verify-email`)
       .query({ token: accessToken })
 
     expect(res.status).toBe(200)
@@ -33,7 +33,7 @@ describe('POST /api/auth/verify-email', () => {
 
   it('should return error: Token not in URL.', async () => {
     const res = await request(app)
-      .post(`/api/auth/verify-email`)
+      .get(`/api/auth/verify-email`)
 
     expect(res.status).toBe(400)
     expect(res.body).toHaveProperty('error', "Token not in URL.")
@@ -41,7 +41,7 @@ describe('POST /api/auth/verify-email', () => {
 
   it('should return error: Invalid token payload', async () => {
     const res = await request(app)
-      .post(`/api/auth/verify-email`)
+      .get(`/api/auth/verify-email`)
       .query({ token: "blahblahblah" })
 
     expect(res.status).toBe(400)
