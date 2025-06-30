@@ -62,7 +62,15 @@ describe('POST /api/auth/login', () => {
         const res = await request(app)
         .post('/api/auth/login')
         .send({email: email, password: password})
+
         expect(res.status).toBe(200)
         expect(res.body).toHaveProperty('message', "Successfully logged in.")
+        expect(res.body.accessToken).toBeDefined()
+        expect(res.body.refreshToken).toBeDefined()
+
+        const cookiesRaw = res.headers['set-cookie'] || []
+        const cookies: string[] = Array.isArray(cookiesRaw) ? cookiesRaw : [cookiesRaw]
+        const refreshCookie = cookies.find((c: string) => c.startsWith('refreshToken='))
+        expect(refreshCookie).toBeDefined()
     })
 })
