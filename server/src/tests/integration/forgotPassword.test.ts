@@ -18,7 +18,7 @@ afterEach(async () => {
 })
 
 describe('POST /api/auth/forgot-password', () => {
-    it("Should return sucess: User logged in.", async () => {
+    it("Should return success: User logged in.", async () => {
         const email = `user+${uuidv4()}@example.com`
         const password = "Dream@505"
         await request(app).post('/api/auth/register').send({email: email, password: password})
