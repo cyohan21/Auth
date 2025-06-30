@@ -7,7 +7,7 @@ const refreshTestStore = new MemoryStore();
 
 export const globalLimiter = rateLimit({ // TODO: change max attempts higher later. 3 is temporary for multiple sensitive endpoints.
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // max 3 requests per IP 
+  max: 5, // max 5 requests per IP 
   standardHeaders: true, // Uses new and modern headers
   legacyHeaders: false, // Disables old ones
   store: globalTestStore,
