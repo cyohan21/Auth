@@ -34,7 +34,7 @@ export default function Register() {
             fontFamily: 'sans-serif'
         }}>
             <h1>Register</h1>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
                 <input
                 type="email"
                 placeholder="email"
@@ -42,7 +42,7 @@ export default function Register() {
                 onChange={e => setEmail(e.target.value)}
                 required
                 />
-                <input 
+                <input
                 type="password"
                 placeholder="password"
                 value={password}
