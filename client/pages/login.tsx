@@ -64,7 +64,7 @@ export default function Login() {
             <button type="submit" disabled={loading}>{loading? 'Logging in...': 'Login'}</button>
             </form>
             <p>Don't have an account? <Link href="/register" style={{color: 'blue'}}>Create one here.</Link></p>
-            {message && <p>{message}</p>}
+            {message && <p style={{color: message.startsWith('✅')? 'green' : 'red'}}>{message}</p>}
         </div>
     )
 }

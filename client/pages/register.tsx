@@ -65,7 +65,7 @@ export default function Register() {
                 </button>
             </form>
             <p>Have an account? <Link href="/login" style={{color: 'blue'}}>Login here.</Link></p>
-            {message && <p>{message}</p>} {/*If message exists, render it, else, don't.*/}
+            {message && <p style={{color: message.startsWith('✅')? 'green' : 'red'}}>{message}</p>} {/*If message exists, render it, else, don't.*/}
         </div>
     )
 }
