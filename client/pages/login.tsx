@@ -22,7 +22,6 @@ export default function Login() {
         let message = err.message
 
         if (data?.details) {
-            // flatten all arrays into a single array of strings
             const allMessages = Object.values(data.details).flat()
             message = allMessages[0]
         } else if (data?.error) {
