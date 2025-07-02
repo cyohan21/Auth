@@ -1,5 +1,6 @@
 import {useState} from "react"
 import api from "../lib/axios"
+import Link from "next/link"
 
 export default function Register() {
     const [email, setEmail] = useState('')
@@ -17,7 +18,18 @@ export default function Register() {
         setMessage('✅ ' + res.data.message)
     }
     catch (err: any) {
-        setMessage('❌ ' + (err.response?.data?.message || err.message))
+        const data = err.response?.data
+        let message = err.message
+
+        if (data?.details) {
+            // flatten all arrays into a single array of strings
+            const allMessages = Object.values(data.details).flat()
+            message = allMessages[0]
+        } else if (data?.error) {
+            message = data.error
+        }
+
+        setMessage('❌ ' + message)
     } 
     finally {
         setLoading(false)
@@ -52,6 +64,7 @@ export default function Register() {
                     {loading? 'Registering...': 'Register'}
                 </button>
             </form>
+            <p>Have an account? <Link href="/login" style={{color: 'blue'}}>Login here.</Link></p>
             {message && <p>{message}</p>} {/*If message exists, render it, else, don't.*/}
         </div>
     )

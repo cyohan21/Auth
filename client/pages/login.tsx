@@ -1,5 +1,6 @@
 import {useState} from "react"
 import api from "../lib/axios"
+import Link from "next/link"
 
 export default function Login() {
     const [email, setEmail] = useState('')
@@ -17,8 +18,19 @@ export default function Login() {
             setMessage(res.data.message)
         }
         catch (err: any) {
-            setMessage(err.response?.data?.message || err.message)
+        const data = err.response?.data
+        let message = err.message
+
+        if (data?.details) {
+            // flatten all arrays into a single array of strings
+            const allMessages = Object.values(data.details).flat()
+            message = allMessages[0]
+        } else if (data?.error) {
+            message = data.error
         }
+
+        setMessage('❌ ' + message)
+    } 
         finally {
             setLoading(false)
         }
@@ -33,6 +45,7 @@ export default function Login() {
             boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
             fontFamily: 'sans-serif'
         }}>
+            <h1>Login</h1>
             <form onSubmit={handleSubmit} noValidate>
             <input 
             type="email"
@@ -50,6 +63,7 @@ export default function Login() {
             />
             <button type="submit" disabled={loading}>{loading? 'Logging in...': 'Login'}</button>
             </form>
+            <p>Don't have an account? <Link href="/register" style={{color: 'blue'}}>Create one here.</Link></p>
             {message && <p>{message}</p>}
         </div>
     )
