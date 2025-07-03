@@ -16,6 +16,7 @@ export default function Login() {
         try {
             const res = await api.post('/auth/login', {email, password})
             setMessage(res.data.message)
+            window.location.href = "/"
         }
         catch (err: any) {
         const data = err.response?.data
