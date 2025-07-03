@@ -292,7 +292,7 @@ export const me: RequestHandler = async (req, res, next) => {
     if (!token) return void res.status(401).json({error: "No token found."})
     try {
         const decoded = jwt.verify(token, secret!) as jwt.JwtPayload
-        return void res.status(200).json({message: "User access verified."})
+        return void res.status(200).json({message: "User access verified.", email: decoded.email})
     }
     catch (err: any) {
         const error = new Error("Token is invalid or expired..");

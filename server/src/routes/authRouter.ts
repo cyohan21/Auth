@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {register, verifyEmail, login, logout, reVerifyEmail, refresh} from "../controllers/authHandler"
+import {register, verifyEmail, login, logout, reVerifyEmail, refresh, me} from "../controllers/authHandler"
 import {forgotPassword, resetPassword} from "../controllers/authPasswordHandler"
 import {globalLimiter, loginRateLimiter, registerRateLimiter, refreshRateLimiter} from "../middleware/rateLimiter"
 import {validate} from "../middleware/validateSchema"
@@ -14,5 +14,6 @@ router.get("/logout", logout)
 router.post("/refresh", refreshRateLimiter, refresh)
 router.post("/forgot-password", validate(forgotPasswordSchema), globalLimiter, forgotPassword)
 router.post("/reset-password", validate(resetPasswordSchema), globalLimiter, resetPassword)
+router.get("/me", me)
 
 export default router
