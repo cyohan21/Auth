@@ -12,14 +12,20 @@ export default function Login() {
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState('')
 
-    useEffect(() => {
-        if (router.isReady) { // only when router is ready!
-      const t = typeof router.query.token === 'string' ? router.query.token : null
-      setToken(t)
-        if (!t) setMessage("❌ Reset token not found in the URL.")
-        }
-    }, [router.isReady, router.query.token])
+    const [validToken, setValidToken] = useState(false)
 
+    useEffect(() => {
+    if (!router.isReady) return;
+    const t = typeof router.query.token === 'string' ? router.query.token : null;
+    setToken(t);
+
+    if (!t) {
+        setMessage("❌ Reset token not found in the URL.");
+        setValidToken(false);
+    } else {
+        setValidToken(true);
+    }
+}, [router.isReady, router.query.token]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -27,8 +33,8 @@ export default function Login() {
         setMessage('')
 
         try {
-            const res = await api.post('/auth/reset-password', {newPassword, verifyNewPassword})
-            setMessage(res.data.message)
+            const res = await api.post(`/auth/reset-password?token=${token}`, {newPassword, verifyNewPassword})
+            setMessage('✅' + res.data.message)
         }
         catch (err: any) {
         const data = err.response?.data
@@ -59,6 +65,8 @@ export default function Login() {
             fontFamily: 'sans-serif'
         }}> 
             <h1>Reset Password</h1>
+            { !validToken && <p style={{color:'red'}}>{message}</p>}
+            {validToken && 
             <form onSubmit={handleSubmit} noValidate>
             <input 
             type="password"
@@ -74,11 +82,12 @@ export default function Login() {
             onChange={e => setVerifyNewPassword(e.target.value)}
             required
             />
-            <button type="submit" disabled={loading}>{loading? 'Resetting Password...': 'Login'}</button>
+            <button type="submit" disabled={loading}>{loading? 'Resetting Password...': 'Reset'}</button>
             </form>
-            <p>Ready to login? <Link href="/login" style={{color: 'blue'}}>Do it here.</Link></p>
-            {message && <p style={{color: message.startsWith('✅')? 'green' : 'red'}}>{message}</p>}
-            
+            }
+            {validToken &&
+            <p>Ready to login? <Link href="/login" style={{color: 'blue'}}>Do it here.</Link></p>}
+            {validToken && message && <p style={{color: message.startsWith('✅')? 'green' : 'red'}}>{message}</p>}
         </div>
     )
 }

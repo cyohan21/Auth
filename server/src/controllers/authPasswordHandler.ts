@@ -11,6 +11,7 @@ import {hashPassword, comparePassword} from "../utils/bcrypt"
 
 const secret = process.env.JWT_SECRET
 const port = process.env.PORT
+const frontendPort = process.env.FRONTEND_PORT || 3000
 
 export const forgotPassword: RequestHandler = async (req, res, next) => {
     const { email } = req.body;
@@ -34,7 +35,7 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
                 const html =`<h1>Reset your password</h1>
                             <body>
                             <p> Password reset link: 
-                            <a href="http://localhost:${port}/api/auth/reset-password?token=${token}">Click Here</a>
+                            <a href="http://localhost:${frontendPort}/reset-password?token=${token}">Click Here</a>
                             </p>
                             </body>`
     
@@ -55,7 +56,7 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
                     html: html
                 })
     
-                console.log(`Email confirmation link: http://localhost:${port}/api/auth/reset-password?token=${token}}`)
+                console.log(`Email confirmation link: http://localhost:${frontendPort}/api/auth/reset-password?token=${token}}`)
             }
                 catch (err) {
                     const error = new Error("Something went wrong with email delivery.");
