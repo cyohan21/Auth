@@ -1,6 +1,6 @@
 # Auth
 
-Auth is an open-source authentication application designed for reuse. It contains a Next.js client and a Node/Express server that relies on Prisma and JSON Web Tokens (JWT).
+Auth is an open-source authentication application designed for reuse. It contains a Next.js client and a Node/Express server that relies on Prisma and JSON Web Tokens (JWT). The frontend interface is now feature complete, providing pages for registration, login and password recovery.
 
 ## Features
 
@@ -8,6 +8,7 @@ Auth is an open-source authentication application designed for reuse. It contain
 * **Login & logout** – JWT access and refresh tokens are issued and managed with cookies.
 * **Password resets** – reset links are sent via email with checks for password reuse.
 * **Rate limiting** – prevents brute-force attempts on sensitive endpoints.
+* **Complete Next.js frontend** – includes pages for sign up, login and account recovery.
 
 The server exposes all authentication endpoints under `/api/auth`.
 
@@ -28,6 +29,8 @@ cd client
 npm install
 npm run dev
 ```
+
+The finished UI covers registration, login and password management. Use `npm run build` to generate a production build.
 
 The server expects a PostgreSQL database configured via the `DATABASE_URL` environment variable and uses other environment variables for email settings and JWT secrets.
 
