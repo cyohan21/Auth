@@ -213,10 +213,18 @@ export const login: RequestHandler = async (req, res, next) => {
 
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true, // Prevents XSS attacks
-        secure: true, // Only sent over HTTPS
+        secure: false, // allows HTTP, temporary for testing
         sameSite: "strict", 
         maxAge: 1000 * 60 * 60 * 24 * 7
     })
+
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true, // Prevents XSS attacks
+        secure: false, // allows HTTP, temporary for testing
+        sameSite: "strict", 
+        maxAge: 1000 * 60 * 15 // 15 mins
+    })
+
     return void res.status(200).json({message: "Successfully logged in.", accessToken, refreshToken})
     }
     catch (err) {
@@ -227,8 +235,7 @@ export const login: RequestHandler = async (req, res, next) => {
 }
 
 export const logout: RequestHandler = async (req, res, next) => {
-    const authHeader = req.headers.authorization as string
-    const token = authHeader?.split(" ")[1]; // Split from Bearer, and take the token only
+    const token = req.cookies.accessToken
     const refreshToken = req.cookies.refreshToken;
     if (!token && !refreshToken) {
         return void res.status(400).json({error: "No tokens provided."})
@@ -280,6 +287,20 @@ export const logout: RequestHandler = async (req, res, next) => {
     return void res.status(200).json({message: "Successfully logged out."})
     }
 
+export const me: RequestHandler = async (req, res, next) => {
+    const token = req.cookies.accessToken
+    if (!token) return void res.status(401).json({error: "No token found."})
+    try {
+        const decoded = jwt.verify(token, secret!) as jwt.JwtPayload
+        return void res.status(200).json({message: "User access verified."})
+    }
+    catch (err: any) {
+        const error = new Error("Token is invalid or expired..");
+        (error as any).status = 401
+        return next(error)
+    }
+
+}
 export const refresh: RequestHandler = async (req, res, next) => {
     const oldRefreshToken = req.cookies.refreshToken
         if (!oldRefreshToken) {
@@ -301,9 +322,16 @@ export const refresh: RequestHandler = async (req, res, next) => {
 
     res.cookie("refreshToken", newRefreshToken, {
         httpOnly: true, // Prevents XSS attacks
-        secure: true, // Only sent over HTTPS
+        secure: false, // allows HTTP, temporary for testing
         sameSite: "strict", 
         maxAge: 1000 * 60 * 60 * 24 * 7 // 7 Days
+    })
+
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true, // Prevents XSS attacks
+        secure: false, // allows HTTP, temporary for testing
+        sameSite: "strict", 
+        maxAge: 1000 * 60 * 15
     })
 
     return void res.status(200).json({message: "Tokens refreshed."})
