@@ -1,6 +1,7 @@
 import {RequestHandler} from "express";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import nodemailer from 'nodemailer';
 dotenv.config()
 // Lib
 import prisma from "../lib/prisma"
@@ -28,7 +29,39 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
     }
 
     const token = jwt.sign({ email }, secret!, { expiresIn: "1d" });
-    console.log(`Email confirmation link: http://localhost:${port}/api/auth/reset-password?token=${token}`);
+
+    try {
+                const html =`<h1>Reset your password</h1>
+                            <body>
+                            <p> Password reset link: 
+                            <a href="http://localhost:${port}/api/auth/reset-password?token=${token}">Click Here</a>
+                            </p>
+                            </body>`
+    
+                const transporter = nodemailer.createTransport({ // Change these values into your own.
+                    host: process.env.EMAIL_HOST,
+                    port: 465,
+                    secure: true,
+                    auth: {
+                        user: process.env.AUTH_USER,
+                        pass: process.env.AUTH_PASS
+                    }
+                })
+    
+                const info = await transporter.sendMail({
+                    from: process.env.AUTH_USER,
+                    to: email,
+                    subject: "Reset your password: Auth-Proj",
+                    html: html
+                })
+    
+                console.log(`Email confirmation link: http://localhost:${port}/api/auth/reset-password?token=${token}}`)
+            }
+                catch (err) {
+                    const error = new Error("Something went wrong with email delivery.");
+                    (error as any).status = 500;
+                    return next(error);
+            }
 
     return void res.status(200).json({
         message: "Password reset link sent. Please check your email.",
