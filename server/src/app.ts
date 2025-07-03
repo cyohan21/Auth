@@ -6,9 +6,11 @@ import { errorHandler } from "./middleware/errorHandler";
 import helmet from "helmet";
 
 const app = express();
+// Update this to match the port your frontend runs on
 const frontendPort = 3000;
 
 app.use(cors({
+    // Change the origin to your frontend URL
     origin: `http://localhost:${frontendPort}`,
     credentials: true // Allows cookies/auth headers to be passed on between ports.
 }));

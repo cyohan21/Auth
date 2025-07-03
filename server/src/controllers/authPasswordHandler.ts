@@ -11,6 +11,7 @@ import {hashPassword, comparePassword} from "../utils/bcrypt"
 
 const secret = process.env.JWT_SECRET
 const port = process.env.PORT
+// Update to match the port or URL where your frontend is served
 const frontendPort = process.env.FRONTEND_PORT || 3000
 
 export const forgotPassword: RequestHandler = async (req, res, next) => {
@@ -34,12 +35,13 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
     try {
                 const html =`<h1>Reset your password</h1>
                             <body>
-                            <p> Password reset link: 
+                            <p> Password reset link:
+                            <!-- Update the URL to match your frontend -->
                             <a href="http://localhost:${frontendPort}/reset-password?token=${token}">Click Here</a>
                             </p>
                             </body>`
     
-                const transporter = nodemailer.createTransport({ // Change these values into your own.
+                const transporter = nodemailer.createTransport({ // Set your SMTP details here
                     host: process.env.EMAIL_HOST,
                     port: 465,
                     secure: true,
@@ -56,6 +58,7 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
                     html: html
                 })
     
+                // Remove or update the following log depending on your environment
                 console.log(`Email confirmation link: http://localhost:${frontendPort}/api/auth/reset-password?token=${token}}`)
             }
                 catch (err) {
