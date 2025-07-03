@@ -35,12 +35,13 @@ export const register: RequestHandler = async (req, res, next) => {
         try {
             const html =`<h1>Confirm your email</h1>
                         <body>
-                        <p> Email confirmation link: 
+                        <p> Email confirmation link:
+                        <!-- Update the following URL to point to your server -->
                         <a href="http://localhost:${port}/api/auth/verify-email?token=${token}">Click Here</a>
                         </p>
                         </body>`
 
-            const transporter = nodemailer.createTransport({ // Change these values into your own.
+            const transporter = nodemailer.createTransport({ // Set your SMTP details here
                 host: process.env.EMAIL_HOST,
                 port: 465,
                 secure: true,
@@ -57,6 +58,7 @@ export const register: RequestHandler = async (req, res, next) => {
                 html: html
             })
 
+            // Remove or update the following log depending on your environment
             console.log(`Email confirmation link: http://localhost:${port}/api/auth/verify-email?token=${token}`)
         }
             catch (err) {
@@ -142,12 +144,13 @@ export const reVerifyEmail: RequestHandler = async (req, res, next) => {
     try {
             const html =`<h1>Confirm your email</h1>
                         <body>
-                        <p> Email confirmation link: 
+                        <p> Email confirmation link:
+                        <!-- Update the following URL to point to your server -->
                         <a href="http://localhost:${port}/api/auth/verify-email?token=${token}">Click Here</a>
                         </p>
                         </body>`
 
-            const transporter = nodemailer.createTransport({ // Change these values into your own.
+            const transporter = nodemailer.createTransport({ // Set your SMTP details here
                 host: process.env.EMAIL_HOST,
                 port: 465,
                 secure: true,
@@ -213,15 +216,15 @@ export const login: RequestHandler = async (req, res, next) => {
 
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true, // Prevents XSS attacks
-        secure: false, // allows HTTP, temporary for testing
-        sameSite: "strict", 
+        secure: false, // set to true when using HTTPS
+        sameSite: "strict",
         maxAge: 1000 * 60 * 60 * 24 * 7
     })
 
     res.cookie("accessToken", accessToken, {
         httpOnly: true, // Prevents XSS attacks
-        secure: false, // allows HTTP, temporary for testing
-        sameSite: "strict", 
+        secure: false, // set to true when using HTTPS
+        sameSite: "strict",
         maxAge: 1000 * 60 * 15 // 15 mins
     })
 
@@ -322,15 +325,15 @@ export const refresh: RequestHandler = async (req, res, next) => {
 
     res.cookie("refreshToken", newRefreshToken, {
         httpOnly: true, // Prevents XSS attacks
-        secure: false, // allows HTTP, temporary for testing
-        sameSite: "strict", 
+        secure: false, // set to true when using HTTPS
+        sameSite: "strict",
         maxAge: 1000 * 60 * 60 * 24 * 7 // 7 Days
     })
 
     res.cookie("accessToken", accessToken, {
         httpOnly: true, // Prevents XSS attacks
-        secure: false, // allows HTTP, temporary for testing
-        sameSite: "strict", 
+        secure: false, // set to true when using HTTPS
+        sameSite: "strict",
         maxAge: 1000 * 60 * 15
     })
 

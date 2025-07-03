@@ -16,6 +16,7 @@ export default function Login() {
         try {
             const res = await api.post('/auth/login', {email, password})
             setMessage(res.data.message)
+            // Redirect to your landing page after login
             window.location.href = "/"
         }
         catch (err: any) {
@@ -68,3 +69,4 @@ export default function Login() {
         </div>
     )
 }
+

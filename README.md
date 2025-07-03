@@ -39,12 +39,12 @@ The server expects a PostgreSQL database configured via the `DATABASE_URL` envir
 Create a `.env` file inside `server` with the following values:
 
 ```text
-DATABASE_URL=postgres://user:password@localhost:5432/auth
-JWT_SECRET=yourSecret
-EMAIL_HOST=smtp.example.com
-AUTH_USER=postmaster@example.com
-AUTH_PASS=yourEmailPassword
-PORT=3030
+DATABASE_URL=postgres://user:password@localhost:5432/auth # set to your DB URL
+JWT_SECRET=yourSecret # change this secret
+EMAIL_HOST=smtp.example.com # your SMTP server
+AUTH_USER=postmaster@example.com # your email username
+AUTH_PASS=yourEmailPassword # your email password
+PORT=3030 # port for the server
 # optional for integration tests
 TEST_RECIPIENT=user@example.com
 ```
@@ -65,3 +65,4 @@ This project is provided under the ISC license and welcomes contributions from t
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+

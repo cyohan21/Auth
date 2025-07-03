@@ -10,6 +10,7 @@ export default function Logout() {
             try {
             api.get("/auth/logout")
             setMessage("✅ Successfully logged out.")
+            // Change the redirect if your login page is at a different route
             setTimeout(() => {window.location.href = "/login"}, 1000)
         }
         catch (err: any) {
